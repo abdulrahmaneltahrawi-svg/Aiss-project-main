@@ -195,7 +195,8 @@ async function get_articles() {
           return `
           <div class="card1" id="blog-card-${item.id}">
               <a href="${link}">
-                <img src="${image}" alt="${item.title || "صورة المدونة"}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='assets/magazine/IMG_1325.webp';">
+                <img src="${image}" alt="${item.title || "صورة المدونة"}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='assets/magazine/IMG_1325.webp';"
+                style="width: 100%; height: 270px; object-fit: cover;">
               </a>
               <div class="class-content1">
                 <h3>${item.title}</h3>
