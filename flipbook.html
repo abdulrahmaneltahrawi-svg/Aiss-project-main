@@ -1,216 +1,232 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="assets/icons/logo.webp" />
     <title>عرض - المعهد العربي لعلوم السلامة</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
-        rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        /* منع التمرير في الصفحة بالكامل */
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
+      /* منع التمرير في الصفحة بالكامل */
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
 
-        .flip-top {
-            padding: 10px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 5px;
-            background: #fff;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
-            width: 95%;
-            max-width: 900px;
-            margin: 10px auto 0;
-            border-radius: 16px 16px 0 0;
-            flex-shrink: 0;
-        }
+      .flip-top {
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 5px;
+        background: #fff;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+        width: 95%;
+        max-width: 900px;
+        margin: 10px auto 0;
+        border-radius: 16px 16px 0 0;
+        flex-shrink: 0;
+      }
 
-        .flip-top h1 {
-            font-size: 18px;
-            color: black;
-            font-weight: 900;
-            white-space: nowrap;
-        }
+      .flip-top h1 {
+        font-size: 18px;
+        color: black;
+        font-weight: 900;
+        white-space: nowrap;
+      }
 
-        .flip-top a {
-            display: inline-block;
-            padding: 8px 10px;
-            border-radius: 10px;
-            background: #e4293a;
-            color: black;
-            font-weight: bold;
-            text-decoration: none;
+      .flip-top a {
+        display: inline-block;
+        padding: 8px 10px;
+        border-radius: 10px;
+        background: #e4293a;
+        color: black;
+        font-weight: bold;
+        text-decoration: none;
+      }
 
-        }
+      #download-pdf {
+        background: #235287;
+        color: white;
+        font-size: 14px;
+        padding: 8px 10px;
+        display: none;
+        /* يظهر فقط عند تحميل الرابط */
+        white-space: nowrap;
+      }
 
-        #download-pdf {
-            background: #235287;
-            color: white;
-            font-size: 14px;
-            padding: 8px 10px;
-            display: none;
-            /* يظهر فقط عند تحميل الرابط */
-            white-space: nowrap;
-            ;
-        }
+      /* جعل الحاوية الرئيسية تأخذ كامل الارتفاع المتاح */
+      .page-content {
+        margin-top: 0 !important;
+        padding-bottom: 0 !important;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
 
-        /* جعل الحاوية الرئيسية تأخذ كامل الارتفاع المتاح */
-        .page-content {
-            margin-top: 0 !important;
-            padding-bottom: 0 !important;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ضبط حاوية الـ PDF لتملأ باقي المساحة */
-        .pdf-viewer-container {
-            flex-grow: 1;
-            width: 95%;
-            max-width: 900px;
-            margin: 0 auto 10px !important;
-            height: auto !important;
-            border-radius: 0 0 16px 16px;
-        }
+      /* ضبط حاوية الـ PDF لتملأ باقي المساحة */
+      .pdf-viewer-container {
+        flex-grow: 1;
+        width: 95%;
+        max-width: 900px;
+        margin: 0 auto 10px !important;
+        height: auto !important;
+        border-radius: 0 0 16px 16px;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-
-
+  <body>
     <main class="page-content">
-        <div class="flip-top">
-            <h1 id="flip-title">جاري تحميل المجلة...</h1>
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <a id="download-pdf" href="#" target="_blank">فتح الملف كامل</a>
-                <a id="flip-back" href="magazine.html">رجوع</a>
-            </div>
+      <div class="flip-top">
+        <h1 id="flip-title">جاري تحميل المجلة...</h1>
+        <div style="display: flex; gap: 15px; align-items: center">
+          <a id="download-pdf" href="#" target="_blank">فتح الملف كامل</a>
+          <a id="flip-back" href="magazine.html">رجوع</a>
         </div>
+      </div>
 
-        <div class="pdf-viewer-container" style="margin-top: 0; border-radius: 0 0 16px 16px;">
-            <iframe id="pdf-frame" src="" width="100%" height="100%" style="border: none;"></iframe>
-        </div>
+      <div
+        class="pdf-viewer-container"
+        style="margin-top: 0; border-radius: 0 0 16px 16px"
+      >
+        <iframe
+          id="pdf-frame"
+          src=""
+          width="100%"
+          height="100%"
+          style="border: none"
+        ></iframe>
+      </div>
     </main>
 
-
-
     <script>
-        const params = new URLSearchParams(window.location.search);
-        const id = params.get("id") ? params.get("id").split('-')[0] : null; // استخراج الرقم فقط من الـ ID
-        const source = params.get("source");
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id") ? params.get("id").split("-")[0] : null;
+      const source = params.get("source");
 
-        // تحديد رابط الرجوع تلقائياً
-        let defaultBack = (source === "manuals") ? "manuals.html" : "magazine.html";
-        let back = params.get("back") || defaultBack;
-        const backBtn = document.getElementById("flip-back");
-        if (backBtn) backBtn.href = back;
+      // 1. تحديد رابط الرجوع فوراً قبل حذف الـ source من العنوان
+      let defaultBack = source === "manuals" ? "manuals.html" : "magazine.html";
+      let back = params.get("back") || defaultBack;
 
-        function loadPDF(url) {
-            if (!url) return;
+      // 2. تحديث زر الرجوع في الصفحة
+      const backBtn = document.getElementById("flip-back");
+      if (backBtn) {
+        backBtn.href = back;
+      }
 
-            // تنظيف الرابط من أي مائلات زائدة
-            let cleanUrl = url.startsWith('/') ? url.substring(1) : url;
+      function loadPDF(url) {
+        if (!url) return;
 
-            // الحل الأضمن: استخدام المسار النسبي المباشر
-            // هذا سيجعل المتصفح يبحث عن الملف داخل مجلد المشروع مهما كان اسمه
-            let absoluteUrl = "./" + cleanUrl;
+        // تنظيف الرابط من أي مائلات زائدة
+        let cleanUrl = url.startsWith("/") ? url.substring(1) : url;
 
-            console.log("جاري محاولة فتح الملف من:", absoluteUrl);
+        // الحل الأضمن: استخدام المسار النسبي المباشر
+        // هذا سيجعل المتصفح يبحث عن الملف داخل مجلد المشروع مهما كان اسمه
+        let absoluteUrl = "./" + cleanUrl;
 
-            const iframe = document.getElementById("pdf-frame");
-            if (iframe) {
-                iframe.src = absoluteUrl;
+        console.log("جاري محاولة فتح الملف من:", absoluteUrl);
+
+        const iframe = document.getElementById("pdf-frame");
+        if (iframe) {
+          iframe.src = absoluteUrl;
+        }
+      }
+
+      if (id && id !== "0") {
+        // تأكد من إضافة ./ قبل api ليعمل الفيتش عند الجميع
+        fetch(`./api/get_magazine.php?id=${id}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              const mag = data.magazine;
+
+              const displayTitle = mag.title || "مجلة السلامة العربية";
+              document.getElementById("flip-title").textContent = displayTitle;
+              document.title = displayTitle + " - المعهد العربي لعلوم السلامة";
+
+              if (mag.slug) {
+                const numericId = String(id).split("-")[0];
+                const newUrl =
+                  window.location.pathname + `?id=${numericId}-${mag.slug}`;
+                window.history.replaceState(null, "", newUrl);
+              }
+
+              // إرسال المسار للدالة
+              loadPDF(mag.file_path);
+            } else {
+              document.getElementById("flip-title").textContent =
+                "المجلة غير موجودة";
             }
-        }
+          })
+          .catch((err) => {
+            console.error("Fetch error:", err);
+            document.getElementById("flip-title").textContent =
+              "فشل في الاتصال بالسيرفر";
+          });
+      }
+      // داخل صفحة flipbook.html في جزء السكريبت
+      if (id && id !== "0") {
+        let apiUrl =
+          source === "manuals"
+            ? `api/get_booklet.php?id=${id}`
+            : `api/get_magazine.php?id=${id}`;
 
-        if (id && id !== "0") {
-            // تأكد من إضافة ./ قبل api ليعمل الفيتش عند الجميع
-            fetch(`./api/get_magazine.php?id=${id}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        const mag = data.magazine;
+        fetch(apiUrl)
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("البيانات المستلمة:", data); // تأكد من رؤية البيانات في F12
 
-                        const displayTitle = mag.title || "مجلة السلامة العربية";
-                        document.getElementById("flip-title").textContent = displayTitle;
-                        document.title = displayTitle + " - المعهد العربي لعلوم السلامة";
+            if (data.success) {
+              // تعديل هام: جلب البيانات من مفتاح booklet أو magazine
+              const item = data.booklet || data.magazine;
 
-                        if (mag.slug) {
-                            const numericId = String(id).split('-')[0];
-                            const newUrl = window.location.pathname + `?id=${numericId}-${mag.slug}`;
-                            window.history.replaceState(null, '', newUrl);
-                        }
+              if (item) {
+                document.getElementById("flip-title").textContent = item.title;
 
-                        // إرسال المسار للدالة
-                        loadPDF(mag.file_path);
-                    } else {
-                        document.getElementById("flip-title").textContent = "المجلة غير موجودة";
-                    }
-                })
-                .catch(err => {
-                    console.error("Fetch error:", err);
-                    document.getElementById("flip-title").textContent = "فشل في الاتصال بالسيرفر";
-                });
-        }
-        // داخل صفحة flipbook.html في جزء السكريبت
-        if (id && id !== "0") {
-            let apiUrl = (source === "manuals")
-                ? `api/get_booklet.php?id=${id}`
-                : `api/get_magazine.php?id=${id}`;
+                // التأكد من جلب رابط الملف الصحيح (تأكد أن الاسم file_path مطابق لقاعدة البيانات)
+                const pdfUrl = item.file_path || item.link;
 
-            fetch(apiUrl)
-                .then(res => res.json())
-                .then(data => {
-                    console.log("البيانات المستلمة:", data); // تأكد من رؤية البيانات في F12
+                if (pdfUrl) {
+                  loadPDF(pdfUrl); // تشغيل الدالة لعرض الملف
+                } else {
+                  console.error("رابط الملف غير موجود في البيانات المستلمة");
+                }
+              }
+            } else {
+              document.getElementById("flip-title").textContent =
+                "المحتوى غير موجود";
+            }
+          })
+          .catch((err) => console.error("خطأ في الاتصال بالسيرفر:", err));
+      }
 
-                    if (data.success) {
-                        // تعديل هام: جلب البيانات من مفتاح booklet أو magazine
-                        const item = data.booklet || data.magazine;
-
-                        if (item) {
-                            document.getElementById("flip-title").textContent = item.title;
-
-                            // التأكد من جلب رابط الملف الصحيح (تأكد أن الاسم file_path مطابق لقاعدة البيانات)
-                            const pdfUrl = item.file_path || item.link;
-
-                            if (pdfUrl) {
-                                loadPDF(pdfUrl); // تشغيل الدالة لعرض الملف
-                            } else {
-                                console.error("رابط الملف غير موجود في البيانات المستلمة");
-                            }
-                        }
-                    } else {
-                        document.getElementById("flip-title").textContent = "المحتوى غير موجود";
-                    }
-                })
-                .catch(err => console.error("خطأ في الاتصال بالسيرفر:", err));
-        }
-
-        // كود لتنظيف الرابط بعد التحميل
-        window.onload = function () {
-            // ننتظر قليلاً حتى يتأكد الكود من جلب البيانات
-            setTimeout(() => {
-                const url = new URL(window.location);
-                // حذف الجزء الخاص بـ source من شريط العنوان فقط دون تحديث الصفحة
-                url.searchParams.delete('source');
-                window.history.replaceState({}, document.title, url.pathname + url.search);
-            }, 1000); // تأخير ثانية واحدة لضمان انتهاء الجلب
-        };
+      // كود لتنظيف الرابط بعد التحميل
+      window.onload = function () {
+        setTimeout(() => {
+          const url = new URL(window.location);
+          if (url.searchParams.has("source")) {
+            url.searchParams.delete("source");
+            window.history.replaceState(
+              {},
+              document.title,
+              url.pathname + url.search,
+            );
+          }
+        }, 1000);
+      };
     </script>
     <script src="js/script.js" defer></script>
     <script src="js/auth-toggle.js" defer></script>
-</body>
-
+  </body>
 </html>

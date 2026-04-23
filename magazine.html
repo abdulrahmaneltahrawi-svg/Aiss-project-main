@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="assets/icons/logo.webp" />
+  <link rel="icon" type="image/webp" href="assets/icons/logo.webp" />
   <title>المجلة-المعهد العربي لعلوم السلامة</title>
   <link rel="stylesheet" href="style.css" />
 
@@ -100,12 +100,12 @@ function createCardHTML(item, btnText = "عرض المجلة", index = 0) {
                 <div class="admin-only" style="display: none; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px;">
                     <a href="edit_magazine.html?id=${id}" 
                        class="btn1" 
-                       style="background:#235287; color:white; margin:0; text-align:center; padding: 6px 2px; font-size: 12px;">
+                       style="background:#235287; color:white; margin:0; text-align:center; padding: 6px 5px; font-size: 12px;">
                        تعديل
                     </a>
                     <button onclick="deleteMagazine(${id})" 
                        class="btn1" 
-                       style="background:#e4293a; color:white; border:none; cursor:pointer; margin:0; padding: 10px 5px; font-size: 12px;">
+                       style="background:#e4293a; color:white; border:1px solid black; cursor:pointer; margin:0; padding: 10px 10px; font-size: 12px;">
                        حذف
                     </button>
                 </div>
@@ -126,7 +126,7 @@ async function get_magazines() {
                 // تحويل بيانات قاعدة البيانات لتناسب الدالة
                 const formatted = {
                     id: m.id,
-                    title:  m.title, // إضافة اسم المجلة قبل العنوان 
+                    title: m.title, 
                     img: m.cover_image,
                     link: m.file_path,
                     date: m.title, // نضع عنوان الإصدار في مكان التاريخ
@@ -134,37 +134,12 @@ async function get_magazines() {
                 };
                 return createCardHTML(formatted, "عرض المجلة", idx);
             }).join("");
+            
+            // تحديث أزرار الإدارة
+            if (typeof checkAuthStatus === 'function') checkAuthStatus();
         }
     } catch (error) {
         console.error("Error fetching magazines:", error);
-    }
-}
-// دالة حذف المجلات
-async function deleteMagazine(id) {
-    if (!confirm("هل أنت متأكد من حذف هذه المجلة؟")) return;
-
-    try {
-        const formData = new FormData();
-        formData.append('magazine_id', id); // تأكد من الاسم الذي يتوقعه ملف الـ PHP للمجلات
-
-        const response = await fetch('api/delete_magazine.php', { 
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert("تم الحذف بنجاح");
-            // حذف الكرت من الواجهة
-            const card = document.getElementById(`magazine-card-${id}`);
-            if (card) card.remove();
-        } else {
-            alert("خطأ: " + result.message);
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        alert("حدث خطأ في الاتصال بالسيرفر");
     }
 }
 

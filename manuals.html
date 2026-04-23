@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="assets/icons/logo.webp" />
+    <link rel="icon" type="image/webp" href="assets/icons/logo.webp" />
     <title>كتيبات السلامة -المعهد العربي لعلوم السلامة</title>
     <link rel="stylesheet" href="style.css" />
     <!-- تسريع الاتصال بسيرفر الملفات الخارجية لتقليل وقت انتظار الصور -->
@@ -117,15 +117,15 @@ function createCardHTML(item, btnText = "عرض الكتيب", index = 0) {
           
           <a href="${href}" class="btn1" ">${btnText}</a>
           
-          <div class="admin-only" ">
+          <div class="admin-only" style="display: none; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; width: 100%;">
             <a href="edit_manuals.html?id=${item.id}" 
                class="btn1" 
-               style="background:#235287; color:white; text-align:center; padding: 6px 2px; font-size: 12px;">
+               style="background:#235287; color:white; margin-right:70px; text-align:center; padding: 6px 10px; font-size: 12px;">
                تعديل
             </a>
             <button onclick="deleteBooklet(${item.id})" 
                class="btn1" 
-               style="background:#e4293a; color:white; border:none; cursor:pointer; padding: 10px 5px; font-size: 12px;">
+               style="background:#e4293a; color:white; border:1px solid black; cursor:pointer; margin:0; padding: 10px 10px; font-size: 12px;">
                حذف
             </button>
           </div>
@@ -156,6 +156,9 @@ async function fetchManualsFromDB() {
                 };
                 return createCardHTML(formattedItem, "عرض الكتيب", index);
             }).join('');
+            
+            // تحديث أزرار الإدارة
+            if (typeof checkAuthStatus === 'function') checkAuthStatus();
         } else {
             console.error("السيرفر أرسل نجاح false:", jsonResponse.message);
         }

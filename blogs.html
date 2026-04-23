@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
   <head>
-    <link rel="icon" href="assets/icons/logo.webp" />
+    <link rel="icon" type="image/webp" href="assets/icons/logo.webp" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
@@ -119,12 +119,12 @@ function renderBlogCard(item, index) {
           </h3>
           
           <div style="margin-top: auto;">
-              <a href="${link}" class="btn1" style="display: block; width: 100%; padding: 8px 0; font-size: 13px; margin: 0;">عرض المدونة</a>
+              <a href="${link}" class="btn1" style="display: block; width: 100%; padding: 8px 0; font-size: 13px; margin: 0;">عرض المقال</a>
               
               ${item.source === 'db' ? `
-                <div class="admin-only" style="display: none; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 8px;">
-                  <a href="edit_article.html?id=${item.id}" class="btn1 admin-btn" style="background:#235287; color:white;">تعديل</a>
-                  <button onclick="deleteArticle(${item.id})" class="btn1 admin-btn" style="background:#e4293a; border:none; color:white; cursor:pointer;">حذف</button>
+                <div class="admin-only" style="display: none; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 8px; width: 100%;">
+                  <a href="edit_article.html?id=${item.id}" class="btn1 admin-btn" style="background:#235287; color:white; padding: 8px 5px; font-size: 12px; margin:0; text-align:center;">تعديل</a>
+                  <button onclick="deleteArticle(${item.id})" class="btn1 admin-btn" style="background:#e4293a; border:1px solid black; color:white; cursor:pointer; padding: 8px 10px; font-size: 12px; margin:0;">حذف</button>
                 </div>
               ` : ''}
           </div>
@@ -204,34 +204,6 @@ fetch(fetchUrl)
   })
   .catch(err => { console.error("Fetch Error:", err); applyFilter(); });
 
-
-// دالة حذف المقالات (المدونة)
-async function deleteArticle(id) {
-    if (!confirm("هل أنت متأكد من حذف هذا المقال؟")) return;
-
-    try {
-        const formData = new FormData();
-        formData.append('article_id', id);
-
-        const response = await fetch('api/delete_article.php', { 
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert("تم حذف المقال");
-            const card = document.getElementById(`blog-card-${id}`);
-            if (card) card.remove();
-        } else {
-            alert("خطأ: " + result.message);
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        alert("فشل الاتصال بالسيرفر");
-    }
-}
 
     </script>
     <!-- القسم الاخير-->
