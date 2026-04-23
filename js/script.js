@@ -1,51 +1,133 @@
+async function get_last_manual() {
+    const grid = document.getElementById("last-manuals-grid");
+    if (!grid) return;
 
+    try {
+        // نستخدم نفس الـ API الخاص بالكتيبات
+        const response = await fetch("api/get_booklets.php");
+        const data = await response.json();
 
-// ===== دوال الحذف العامة =====
-async function deleteArticle(id) {
-  if (!confirm("هل أنت متأكد من حذف هذا المقال؟")) return;
-  try {
-    const formData = new FormData();
-    formData.append("article_id", id);
-    const response = await fetch("api/delete_article.php", {
-      method: "POST",
-      body: formData,
-    });
-    const result = await response.json();
-    if (result.success) {
-      alert("تم حذف المقال بنجاح");
-      const card = document.getElementById(`blog-card-${id}`);
-      if (card) card.remove();
-    } else {
-      alert("خطأ: " + result.message);
+        if (data.success && data.booklets && data.booklets.length > 0) {
+            // 1. ترتيب البيانات لجلب الأحدث (بناءً على الـ ID)
+            const latestManual = [...data.booklets].sort((a, b) => b.id - a.id)[0];
+
+            // 2. تحويل البيانات لتناسب دالة createCardHTML
+            const formatted = {
+                id: latestManual.id,
+                title: latestManual.title, 
+                img: latestManual.cover_image,
+                link: latestManual.file_path,
+                slug: latestManual.slug
+            };
+
+            // 3. عرض الكرت الواحد فقط
+            grid.innerHTML = createCardHTML(formatted, "قراءة الكتيب");
+            
+            // تحديث أزرار الإدارة إذا كان المستخدم مسجل دخول
+            if (typeof checkAuthStatus === 'function') checkAuthStatus();
+        } else {
+            grid.innerHTML = "<p>لا توجد كتيبات حالياً</p>";
+        }
+    } catch (error) {
+        console.error("Error fetching last manual:", error);
     }
-  } catch (error) {
-    console.error("Error:", error);
-    alert("فشل الاتصال بالسيرفر");
-  }
 }
 
-async function deleteMagazine(id) {
-  if (!confirm("هل أنت متأكد من حذف هذه المجلة؟")) return;
-  try {
-    const formData = new FormData();
-    formData.append("magazine_id", id);
-    const response = await fetch("api/delete_magazine.php", {
-      method: "POST",
-      body: formData,
-    });
-    const result = await response.json();
-    if (result.success) {
-      alert("تم الحذف بنجاح");
-      const card = document.getElementById(`magazine-card-${id}`);
-      if (card) card.remove();
-    } else {
-      alert("خطأ: " + result.message);
+// استدعاء الدالة عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', get_last_manual);
+
+
+
+
+async function get_last_magazine_only() {
+    const grid = document.getElementById("last-magazines-grid");
+    if (!grid) return;
+
+    try {
+        const response = await fetch("api/get_magazines.php");
+        const data = await response.json();
+
+        if (data.success && data.magazines && data.magazines.length > 0) {
+            // ترتيب المجلات حسب الـ ID لجلب الأحدث (أكبر ID)
+            const latest = [...data.magazines].sort((a, b) => b.id - a.id)[0];
+
+            // تحويل البيانات لتناسب دالة createCardHTML التي لديك
+            const formatted = {
+                id: latest.id,
+                title: latest.title, 
+                img: latest.cover_image,
+                link: latest.file_path,
+                slug: latest.slug
+            };
+
+            // حقن كرت واحد فقط داخل الحاوية
+            grid.innerHTML = createCardHTML(formatted, "قراءة العدد الأخير");
+            
+            // تفعيل أزرار التعديل/الحذف إذا كان المدير مسجل دخول
+            if (typeof checkAuthStatus === 'function') checkAuthStatus();
+        }
+    } catch (error) {
+        console.error("خطأ في جلب آخر مجلة:", error);
     }
-  } catch (error) {
-    console.error("Error:", error);
-    alert("حدث خطأ في الاتصال بالسيرفر");
-  }
 }
+
+// تشغيل الدالة
+document.addEventListener('DOMContentLoaded', get_last_magazine_only);
+
+
+
+
+
+
+async function get_last_blog_only() {
+    const grid = document.getElementById("last-blogs-grid");
+    if (!grid) return;
+
+    try {
+        const response = await fetch("api/get_articles.php");
+        if (!response.ok) throw new Error("السيرفر لا يستجيب");
+
+        const data = await response.json();
+        // التأكد من جلب المقالات سواء كان اسمها articles أو blogs
+        const articles = data.articles || data.blogs || data.data; 
+
+        if (data.success && articles && articles.length > 0) {
+            // جلب الأحدث
+            const latest = [...articles].sort((a, b) => b.id - a.id)[0];
+            
+            // تجهيز البيانات
+            const title = latest.title;
+            const image = latest.cover_image || latest.img || 'assets/magazine/placeholder.webp';
+            const slug = (title || "").trim().replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+            const link = `views.html?id=${latest.id}-${slug}`;
+
+            // بناء الكرت مباشرة
+            grid.innerHTML = `
+                <div class="card1" id="blog-card-${latest.id}" style="max-width:400px; margin:auto;">
+                    <a href="${link}">
+                        <img src="${image}" alt="${title}" style="width: 100%; height: 250px; object-fit: cover;" loading="lazy">
+                    </a>
+                    <div class="class-content1" style="padding: 15px 10px;">
+                        <h3 style="font-size: 1.1rem; margin-bottom: 10px; min-height: 2.4em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            ${title}
+                        </h3>
+                        <a href="${link}" class="btn1" style="display: block; text-align: center;">قراءة المقال</a>
+                    </div>
+                </div>
+            `;
+            
+            if (typeof checkAuthStatus === 'function') checkAuthStatus();
+        } else {
+            grid.innerHTML = "<p style='text-align:center;'>لا توجد مقالات حالياً</p>";
+        }
+    } catch (error) {
+        console.error("خطأ في جلب آخر مقال:", error);
+    }
+}
+
+// التأكد من تشغيل الدالة
+document.addEventListener('DOMContentLoaded', get_last_blog_only);
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
