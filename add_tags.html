@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="assets/icons/logo.webp" />
+    <title>إضافة الوسوم - المعهد العربي لعلوم السلامة</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js"></script>
+    <style>
+      .editor-wrapper {
+        max-width: 1200px;
+        margin: 140px auto 40px;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 30px;
+        margin-bottom: 15px;
+      }
+      .db-sidebar {
+        background: #fff;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        height: fit-content;
+      }
+      .db-sidebar ul {
+        list-style: none;
+        padding: 0;
+      }
+      .db-sidebar li {
+        margin-bottom: 10px;
+      }
+      .db-sidebar a {
+        display: block;
+        padding: 12px 15px;
+        border-radius: 10px;
+        color: #444;
+        font-weight: bold;
+        transition: 0.3s;
+      }
+      .db-sidebar a:hover,
+      .db-sidebar a.active {
+        background: #f0f4f8;
+        color: #e4293a;
+      }
+
+      .form-box {
+        background: #fff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #235287;
+      }
+      .form-group input[type="text"],
+      .form-group input[type="file"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: inherit;
+        margin-bottom: 10px;
+      }
+      .save-btn {
+        background: #e4293a;
+        color: #fff;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+      }
+      .save-btn:hover {
+        background: #b71c1c;
+      }
+
+      /* تنسيق جدول عرض التاجات */
+      .tags-display-table {
+        width: 100%;
+        margin-top: 40px;
+        border-collapse: collapse;
+        background: #fff;
+      }
+      .tags-display-table th, .tags-display-table td {
+        padding: 12px;
+        text-align: right;
+        border-bottom: 1px solid #eee;
+      }
+      .tags-display-table th {
+        background-color: #f9f9f9;
+        color: #235287;
+      }
+
+      @media (max-width: 768px) {
+        .editor-wrapper {
+          grid-template-columns: 1fr;
+          margin-top: 100px;
+        }
+        .db-sidebar {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+
+    <div class="editor-wrapper">
+      <aside class="db-sidebar">
+        <h3 style="color: #235287; margin-bottom: 20px">القائمة</h3>
+        <ul>
+          <li><a href="dashboard.html">الرجوع</a></li>
+          <li><a href="#" class="active">إضافة الوسوم</a></li>
+        </ul>
+      </aside>
+      <main class="form-box">
+        
+
+        <h2 style="color: #235287; margin-bottom: 25px">اضافة تاجات جديدة</h2>
+        <div class="form-group">
+          <label>اسم التاج:</label>
+          <input
+            type="text"
+            id="title"
+            placeholder="أدخل اسم التاج هنا..."
+          />
+          <label>اسم التاج بالانجليزي:</label>
+          <input
+            type="text"
+            id="slug"
+            placeholder="أدخل اسم التاج بالانجليزي..."
+          />
+        </div>
+
+
+        <button class="save-btn" onclick="saveTag()">
+          اضافة 
+        </button>
+
+<div style="margin-top: 50px;">
+  <h3 style="color: #235287; margin-bottom: 15px;">الوسوم المضافة حالياً</h3>
+  <table class="tags-display-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>اسم التاج</th>
+        <th>إجراءات</th> </tr>
+    </thead>
+    <tbody id="tags-list-body">
+      <tr><td colspan="3" style="text-align:center;">جاري تحميل الوسوم...</td></tr>
+    </tbody>
+  </table>
+</div>
+      </main>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script src="js/script.js"></script>
+    <script>
+      // دالة لجلب الوسوم وعرضها في الجدول
+      async function fetchTagsList() {
+  try {
+    const response = await fetch("api/get_tags.php");
+    const data = await response.json();
+    const tbody = document.getElementById("tags-list-body");
+    
+    if (data.success && data.tags) {
+      tbody.innerHTML = data.tags.map(tag => `
+        <tr>
+          <td>${tag.id}</td>
+          <td>${tag.name}</td>
+          <td style="text-align: center;">
+            <button onclick="deleteTag(${tag.id})" 
+                    style="background: #e4293a; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; transition: 0.3s;">
+                حذف
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">لا توجد وسوم مضافة.</td></tr>';
+    }
+  } catch (error) {
+    console.error("Error fetching tags:", error);
+  }
+}
+
+async function deleteTag(tagId) {
+  // رسالة تأكيد للمستخدم
+  if (!confirm("هل أنت متأكد من حذف هذا الوسم؟ سيتم فك ارتباطه بجميع المقالات أيضاً.")) {
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("tag_id", tagId); // تطابق مع المتغير في كود PHP الخاص بك
+
+  try {
+    const response = await fetch("api/delete_tag.php", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert("تم الحذف بنجاح");
+      fetchTagsList(); // تحديث الجدول فوراً بعد الحذف
+    } else {
+      alert("فشل الحذف: " + data.message);
+    }
+  } catch (error) {
+    console.error("Error deleting tag:", error);
+    alert("حدث خطأ في الاتصال بالسيرفر");
+  }
+}
+
+      async function saveTag() {
+        const name = document.getElementById("title").value.trim();
+        const slug = document.getElementById("slug").value.trim();
+
+        if (!name || !slug) {
+          alert("يرجى ملء جميع الحقول");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("slug", slug);
+
+        try {
+          const response = await fetch("api/add_tag.php", {
+            method: "POST",
+            body: formData
+          });
+          const data = await response.json();
+          alert(data.message);
+          if (data.success) {
+            document.getElementById("title").value = "";
+            document.getElementById("slug").value = "";
+            fetchTagsList(); // تحديث الجدول بعد الإضافة
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("حدث خطأ في الاتصال بالسيرفر");
+        }
+      }
+
+      // التحقق من الصلاحيات عند تحميل الصفحة لضمان أن الأدمن فقط من يضيف الوسوم
+      window.addEventListener('load', () => {
+          fetch('api/check_user_auth.php', { cache: 'no-store' })
+          .then(r => r.json())
+          .then(data => {
+              if(!data.authenticated || !data.user || data.user.can_add_article != 1){
+                  window.location.href = 'index.html';
+              } 
+          });
+          fetchTagsList(); // جلب البيانات عند تحميل الصفحة
+      });
+
+
+      
+    </script>
+    <script src="js/auth-toggle.js"></script>
+  </body>
+</html>

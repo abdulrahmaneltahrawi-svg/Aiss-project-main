@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="تفاصيل المقالات والأحداث العلمية في المعهد العربي لعلوم السلامة - قراءة متعمقة في مواضيع السلامة والصحة المهنية." />
+    <link rel="icon" href="assets/icons/logo.webp" />
+    <title>تفاصيل الكرت-المعهد العربي لعلوم السلامة</title>
+    <link rel="stylesheet" href="style.css?v=1.0.1" />
+
+    <!-- تسريع الوصول للخطوط والسيرفرات الخارجية -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <!--تعريف للخط-->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!--كود اخذ الملفات -->
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+
+    <!--كود اخذ البيانات-->
+
+    <div class="container0">
+      <h1 id="title-placeholder"></h1>
+      <div class="image-wrapper" style="min-height: 400px; background: #eee; border-radius: 8px; overflow: hidden; margin-bottom: 20px;">
+          <img id="image-placeholder" 
+               alt="جاري التحميل..." 
+               width="800" 
+               height="450" 
+               style="width: 100%; height: auto; display: block;"
+               fetchpriority="high"
+               decoding="async"/>
+      </div>
+
+      <!-- حاوية الوسوم -->
+   
+
+      <p id="description-placeholder"></p>
+      <br />
+         <div id="tags-display-container" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+      </div>
+
+      <!-- قسم مقالات ذات صلة بناءً على التاج المشترك -->
+      <div id="related-articles-section" style="margin-top: 50px; border-top: 1px solid #ddd; padding-top: 30px;">
+          <h2 style="color: #235287; margin-bottom: 20px; font-size: 22px;">مقالات ذات صلة</h2>
+          <div id="related-grid" class="card-container1" style="padding: 20px 0;">
+              <p style="color: #888;">جاري البحث عن مقالات مشابهة...</p>
+          </div>
+      </div>
+
+      <!-- قسم التعليقات -->
+      <div class="comments-section">
+        <h3>التعليقات</h3>
+        <div id="comments-list">
+          <!-- التعليقات ستظهر هنا -->
+        </div>
+
+        <div class="comment-form" id="comment-form-container">
+          <h3 id="form-title">اترك تعليقاً</h3>
+          <form id="comment-form">
+            <input type="hidden" id="parent-id" value="">
+            <div style="display: flex; gap: 10px;">
+              <input type="text" id="commenter-name" placeholder="الاسم *" required>
+              <input type="email" id="commenter-email" placeholder="البريد الإلكتروني *" required>
+            </div>
+            <textarea id="comment-text" rows="4" placeholder="اكتب تعليقك هنا..." required></textarea>
+            <button type="submit" id="submit-comment">إرسال التعليق</button>
+            <button type="button" id="cancel-reply" style="display:none; background:#888; margin-right:5px;">إلغاء الرد</button>
+          </form>
+        </div>
+      </div>
+
+      <a id="back-link" href="blogs.html"
+        ><button class="back">العوده للصفحه السابقة</button></a
+      >
+    </div>
+
+  
+    <script src="js/events.js" defer></script>
+    <script src="js/codes.js" defer></script>
+    <script>
+      // سيتم تنفيذ الكود بعد تحميل DOM بفضل defer أو DOMContentLoaded
+      document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      const source = params.get("source"); // التحقق من مصدر البيانات
+      const EVENTS_CACHE_KEY = "aissEventsCacheV1";
+      const COMMENTS_KEY = `comments_${source || 'blog'}_${id}`;
+
+      // دوال إدارة التعليقات
+      function getComments() {
+        return JSON.parse(localStorage.getItem(COMMENTS_KEY)) || [];
+      }
+
+      function saveComment(name, email, text, parentId = null) {
+        const comments = getComments();
+        const newComment = {
+          id: Date.now(),
+          name,
+          email,
+          text,
+          parentId,
+          date: new Date().toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' })
+        };
+        comments.push(newComment);
+        localStorage.setItem(COMMENTS_KEY, JSON.stringify(comments));
+        renderComments();
+      }
+
+      function renderComments() {
+        const container = document.getElementById("comments-list");
+        const allComments = getComments();
+        container.innerHTML = "";
+
+        const mainComments = allComments.filter(c => !c.parentId);
+        
+        if (mainComments.length === 0) {
+          container.innerHTML = "<p style='color:#888;'>لا توجد تعليقات بعد. كن أول من يعلق!</p>";
+          return;
+        }
+
+        mainComments.forEach(comment => {
+          container.innerHTML += createCommentHTML(comment, allComments);
+        });
+      }
+
+      function createCommentHTML(comment, allComments) {
+        const replies = allComments.filter(c => c.parentId === comment.id);
+        let html = `
+          <div class="comment-item" id="comment-${comment.id}">
+            <div class="comment-header">
+              <span class="comment-author">${comment.name}</span>
+              <span class="comment-date">${comment.date}</span>
+            </div>
+            <div class="comment-body">${comment.text}</div>
+            <button class="reply-btn" onclick="prepareReply(${comment.id}, '${comment.name}')">رد</button>
+            <div class="replies-container">
+              ${replies.map(r => createCommentHTML(r, allComments)).join('')}
+            </div>
+          </div>
+        `;
+        return html;
+      }
+
+      function prepareReply(parentId, parentName) {
+        document.getElementById("parent-id").value = parentId;
+        document.getElementById("form-title").innerText = `الرد على: ${parentName}`;
+        document.getElementById("cancel-reply").style.display = "inline-block";
+        document.getElementById("comment-text").focus();
+        // التمرير للنموذج
+        document.getElementById("comment-form-container").scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function resetForm() {
+        document.getElementById("comment-form").reset();
+        document.getElementById("parent-id").value = "";
+        document.getElementById("form-title").innerText = "اترك تعليقاً";
+        document.getElementById("cancel-reply").style.display = "none";
+      }
+
+      // تهيئة الأحداث
+      document.getElementById("comment-form").onsubmit = function(e) {
+        e.preventDefault();
+        const name = document.getElementById("commenter-name").value;
+        const email = document.getElementById("commenter-email").value;
+        const text = document.getElementById("comment-text").value;
+        const parentId = document.getElementById("parent-id").value ? parseInt(document.getElementById("parent-id").value) : null;
+
+        saveComment(name, email, text, parentId);
+        resetForm();
+      };
+
+      document.getElementById("cancel-reply").onclick = resetForm;
+
+      async function loadDynamicContent() {
+        let data;
+        let item = null; // تعريف المتغير في البداية لتجنب خطأ ReferenceError
+
+         if (source === "db" || !source) {
+          // جلب من قاعدة البيانات مباشرة
+          try {
+            const response = await fetch(`api/get_article.php?id=${id}`);
+            const result = await response.json(); // تغيير الاسم لتجنب تضاربه مع المتغير data في الأعلى
+            if (result.success) {
+              item = result.article;
+              // توحيد المسميات لتعمل مع الكود الموجود
+              item.image = item.inner_image || item.cover_image;
+              item.description = item.content;
+
+              // تحديث شريط العنوان ليحتوي على الـ slug الحقيقي من قاعدة البيانات
+              if (item.slug) {
+                // يجب إبقاء الرقم في بداية الرابط لكي يتمكن ملف PHP من قراءته عند تحديث الصفحة
+                const numericId = String(id).split('-')[0];
+                const newUrl = window.location.pathname + `?id=${numericId}-${item.slug}`;
+                window.history.replaceState(null, '', newUrl);
+              }
+            }
+          } catch (err) {
+            console.error("Fetch DB article error:", err);
+          }
+        } 
+        
+        if (!item) { // إذا لم يتم العثور عليه في قاعدة البيانات، نتحقق من المصادر الأخرى
+         if (source === "codes") {       // جلب بيانات الأكواد والمعايير من الملف المحلي
+          // جلب بيانات الأكواد والمعايير من الملف المحلي
+          // استخدام البيانات من js/codes.js التي تم استدعاؤها أعلاه
+          data = typeof codesData !== "undefined" ? codesData : [];
+          const backLink = document.getElementById("back-link");
+          if (backLink) backLink.href = "cods.html";
+        } else if (source === "events") {
+          // إذا تم جلب الأحداث من موقع AISS مسبقًا، نستخدم الكاش أولًا
+          try {
+            const cached = JSON.parse(localStorage.getItem(EVENTS_CACHE_KEY));
+            data = Array.isArray(cached) && cached.length ? cached : events;
+          } catch (_) {
+            data = events;
+          }
+          const backLink = document.getElementById("back-link");
+          if (backLink) backLink.href = "event.html";
+        } else {
+          // المصدر الافتراضي هو المدونات
+          data = myCards;
+          const backLink = document.getElementById("back-link");
+          if (backLink) backLink.href = "blogs.html";
+        }
+
+        // تحسين زر العودة: إذا كان المستخدم قادماً من صفحة الوسوم أو أي صفحة أخرى، نجعله يعود إليها بذكاء
+        const backLink = document.getElementById("back-link");
+        if (backLink && document.referrer && !document.referrer.includes(window.location.pathname)) {
+            backLink.href = document.referrer;
+        }
+      }
+
+        // `myCards` مصفوفة، وداخلها `id` ليس بنفس ترتيب الفهارس (index)،
+        // لذلك نطابق حسب قيمة `item.id` بدل استخدام `data[id]`.
+        if (!item) { // نقوم بالبحث في البيانات المحلية فقط إذا لم نجد المقال في قاعدة البيانات
+          if (Array.isArray(data)) {
+            const byId = data.find((it) => String(it.id) === String(id));
+            const byTitle = data.find((it) => (it.titlesubject || it.title) && (it.titlesubject || it.title).trim().replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '') === id);
+            const byIndex = data[Number(id)];
+            item = byId || byTitle || byIndex || null;
+          } else if (data && typeof data === "object") {
+            item = data[id] || data[String(id)] || data[Number(id)] || null;
+          }
+        }
+
+        if (item) {
+          // تحديث عنوان التبويب في المتصفح ليظهر عنوان المقال
+          if (item.title) {
+            document.title = item.title + " - المعهد العربي لعلوم السلامة";
+          }
+
+          document.getElementById("title-placeholder").innerText = item.title;
+          const imgPlaceholder = document.getElementById("image-placeholder");
+          // First try viewImage, then backgrongImage, then image, then img, then default
+          imgPlaceholder.src = item.viewImage || item.backgrongImage || item.image || item.img || "assets/magazine/placeholder.webp";
+          imgPlaceholder.alt = item.title || "صورة توضيحية"; // إضافة alt ديناميكيًا
+          // عرض المحتوى سواء كان اسمه content أو description
+          document.getElementById("description-placeholder").innerHTML =
+            item.content || item.description;
+
+          // عرض الوسوم المرتبطة بالمقال (وبداخلها سيتم جلب المقالات المشابهة)
+          displayArticleTags(String(id).split('-')[0]);
+
+          renderComments(); // تحميل التعليقات بعد تحميل المحتوى
+        }
+      }
+
+      async function displayArticleTags(articleId) {
+        const container = document.getElementById("tags-display-container");
+        if (!container) return;
+        container.innerHTML = ""; // تنظيف الحاوية قبل الإضافة
+
+        try {
+          // تعديل article_id إلى id ليتوافق مع ملف PHP
+          const response = await fetch(`api/get_article_tags.php?id=${articleId}`);
+          const data = await response.json();
+          
+          if (data.success && Array.isArray(data.tags)) {
+            data.tags.forEach(tag => {
+              const tagName = (typeof tag === 'object') ? tag.name : tag;
+              const tagSlug = (typeof tag === 'object') ? (tag.slug || tag.name) : tag;
+              const tagId = (typeof tag === 'object') ? tag.id : null;
+              
+              if (tagName) {
+                const tagLink = document.createElement("a");
+                // الربط المباشر بصفحة tags.html بدلاً من blogs.html
+                tagLink.href = `tags.html?tagId=${tagId || ''}&tagName=${encodeURIComponent(tagName)}&tagSlug=${encodeURIComponent(tagSlug)}`;
+                tagLink.style = "background: #23528715; color: #235287; padding: 5px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; border: 1px solid #23528730; transition: 0.3s; text-decoration: none;";
+                tagLink.textContent = "# " + tagName;
+                tagLink.onmouseover = () => tagLink.style.background = "#23528730";
+                tagLink.onmouseout = () => tagLink.style.background = "#23528715";
+                container.appendChild(tagLink);
+
+                 // جلب المقالات المشتركة في أول وسم يتم العثور عليه
+                if (container.children.length === 1) {
+                    fetchRelatedByTag(tagSlug, articleId);
+                }
+              
+              }
+            });
+          } else {
+            document.getElementById("related-grid").innerHTML = "<p>لا توجد مقالات مرتبطة.</p>";
+          }
+        } catch (err) { console.error("فشل في تحميل الوسوم:", err); }
+      }
+
+      // دالة لجلب المقالات التي لها نفس التاج
+      async function fetchRelatedByTag(tagSlug, currentId) {
+        const relatedGrid = document.getElementById("related-grid");
+        try {
+          const url = `api/get_articles_by_tag.php?tag=${encodeURIComponent(tagSlug)}`;
+          const res = await fetch(url);
+          const data = await res.json();
+          
+          // استخراج المصفوفة بمرونة (دعم JSON المختلف)
+          let articles = [];
+          if (Array.isArray(data)) articles = data;
+          else if (data && typeof data === 'object') articles = data.articles || data.data || [];
+          
+          // تصفية المقال الحالي من النتائج لكي لا يظهر في "ذات صلة"
+          const filtered = articles.filter(a => String(a.id) !== String(currentId)).slice(0, 4);
+
+          if (filtered.length > 0) {
+            relatedGrid.innerHTML = filtered.map(item => {
+              const slug = (item.title || "").trim().replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+              const link = `views.html?id=${item.id}-${slug}&source=db`;
+              return `
+                <div class="card1">
+                  <a href="${link}"><img src="${item.cover_image || 'assets/magazine/placeholder.webp'}" alt="${item.title}"></a>
+                  <div class="class-content1">
+                    <h3>${item.title}</h3>
+                    <a href="${link}" class="btn1">عرض المقال</a>
+                  </div>
+                </div>`;
+            }).join("");
+          } else {
+            relatedGrid.innerHTML = "<p>لا توجد مقالات مشابهة حالياً.</p>";
+          }
+        } catch (err) { relatedGrid.innerHTML = ""; }
+      }
+
+      loadDynamicContent();
+      });
+
+    
+    </script>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/script.js" defer></script>
+    <script src="js/auth-toggle.js" defer></script>
+  </body>
+</html>

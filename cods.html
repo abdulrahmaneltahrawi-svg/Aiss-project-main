@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <link rel="icon" href="assets/icons/logo.webp" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>الاكواد و المعايير-المعهد العربي لعلوم السلامة</title>
+    <!--تعريف للخط-->
+
+   
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+   <!--قسم صفحة العرض-->
+
+
+    <div class="hero-section-m">
+      <img src="assets/imge/0006.jpg" alt="hero-logo" loading="lazy"/>
+      <div class="logo-text"><p>الأكواد والمعايير</p></div>
+    </div>
+
+    <!--قسم الكروت-->
+    <div class="title0">
+      <p>الأكواد والمعايير</p>  
+
+    </div>
+
+    <div id="codes-grid" class="card-container1" style="min-height: 600px;"></div>
+
+    <div class="load-more-btn-container">
+      <button id="load-more-codes" class="btn1" style="display: none;">عرض المزيد</button>
+    </div>
+
+<script src="js/codes.js"></script>
+<script>
+let allCodes = [];
+let displayedCodesCount = 0;
+const codesPerPage = 8;
+const PAGE_NAME = "cods.html";
+
+function renderNextCodes() {
+  const grid = document.getElementById("codes-grid");
+  const loadMoreBtn = document.getElementById("load-more-codes");
+  if (!grid) return;
+
+  const nextChunk = allCodes.slice(displayedCodesCount, displayedCodesCount + codesPerPage);
+  
+  const html = nextChunk.map((item, index) => {
+    const img = item.image || "assets/imge/0006.jpg";
+    const title = (item.titlesubject || item.title || "").trim();
+    const slug = title.replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return `
+      <div class="card1">
+        <img src="${img}" alt="${title || "كود"}" loading="lazy" onerror="this.onerror=null; this.src='assets/icons/logo.webp';">
+        <div class="class-content1">
+          <h3>${title}</h3>
+          <a href="views.html?id=${slug}&source=codes" class="btn1">عرض التفاصيل</a>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  grid.insertAdjacentHTML('beforeend', html);
+  displayedCodesCount += nextChunk.length;
+
+  if (loadMoreBtn) {
+    loadMoreBtn.style.display = (displayedCodesCount < allCodes.length) ? "inline-block" : "none";
+  }
+}
+
+function renderCodes(data) {
+  allCodes = data;
+  const grid = document.getElementById("codes-grid");
+  if (grid) grid.innerHTML = "";
+  
+  let countToRender = codesPerPage;
+  if (document.referrer.includes('views.html')) {
+    const savedCount = sessionStorage.getItem(`count_${PAGE_NAME}`);
+    if (savedCount) countToRender = parseInt(savedCount);
+  }
+
+  displayedCodesCount = 0;
+  const initialCodes = allCodes.slice(0, countToRender);
+  displayedCodesCount = initialCodes.length;
+  
+  grid.innerHTML = initialCodes.map((item, index) => `
+      <div class="card1">
+        <img src="${item.image || 'assets/imge/0006.jpg'}" alt="${item.titlesubject || item.title || "كود"}" loading="lazy" onerror="this.onerror=null; this.src='assets/icons/logo.webp';">
+        <div class="class-content1">
+          <h3>${item.titlesubject || item.title || ""}</h3>
+          <a href="views.html?id=${(item.titlesubject || item.title || "").trim().replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '')}&source=codes" class="btn1">عرض التفاصيل</a>
+        </div>
+      </div>
+  `).join("");
+
+  const loadMoreBtn = document.getElementById("load-more-codes");
+  if (loadMoreBtn) loadMoreBtn.style.display = (displayedCodesCount < allCodes.length) ? "inline-block" : "none";
+}
+
+function loadCodes() {
+  const grid = document.getElementById("codes-grid");
+  if (!grid) return;
+
+  // استخدام البيانات من js/codes.js المتوقع وجود متغير codesData فيها
+  const data = typeof codesData !== "undefined" ? codesData : [];
+
+  if (data.length > 0) {
+    renderCodes(data);
+
+    // استرجاع مكان النزول عند العودة من صفحة التفاصيل
+    if (document.referrer.includes('views.html')) {
+      const savedPos = sessionStorage.getItem(`scroll_${PAGE_NAME}`);
+      if (savedPos) setTimeout(() => window.scrollTo({ top: parseInt(savedPos), behavior: 'instant' }), 250);
+    }
+  } else {
+    grid.innerHTML = `<p style="padding:16px;text-align:center;">تعذر تحميل الأكواد والمعايير حاليًا.</p>`;
+  }
+}
+
+document.getElementById("load-more-codes")?.addEventListener("click", renderNextCodes);
+document.addEventListener("DOMContentLoaded", loadCodes);
+</script>
+    
+
+
+
+     <!-- القسم الاخير-->
+
+   <div id="footer-placeholder"></div>
+
+        <script src="js/script.js"></script>
+    <script src="js/auth-toggle.js"></script>
+  </body>
+</html>

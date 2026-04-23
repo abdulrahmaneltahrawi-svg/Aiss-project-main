@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+        <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="assets/icons/logo.webp" />
+    <title>إتمام الطلب</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+  </head>
+  <body>
+    <div class="aiss-checkout-wrapper"></div>
+
+    <div id="header-placeholder"></div>
+    
+    <div class="checkout-container">
+
+      <div class="billing-details">
+        <h3 class="section-title">تفاصيل الفاتورة</h3>
+        <form>
+          <div class="input-group">
+            <div class="field">
+              <label>اسم العائلة *</label>
+              <input type="text" id="last-name" name="last-name" required>
+            </div>
+            <div class="field">
+              <label>الاسم الأول *</label>
+              <input type="text" id="first-name" name="first-name" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>اسم الشركة (اختياري)</label>
+            <input type="text" />
+          </div>
+
+          <div class="field">
+            <label>الدولة / المنطقة *</label>
+            <select>
+              <option>الإمارات العربية المتحدة</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>الجوال *</label>
+            <input type="tel" id="phone" name="phone" required autocomplete="tel">
+          </div>
+
+          <div class="field">
+            <label>البريد الإلكتروني *</label>
+            <input type="email" id="email" name="email" required autocomplete="email">
+          </div>
+
+          <h3 class="section-title">معلومات إضافية</h3>
+          <div class="field">
+            <label>ملاحظات الطلب (اختياري)</label>
+            <textarea
+              placeholder="ملاحظات حول الطلب، مثال: ملحوظة خاصة بتسليم الطلب."
+            ></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="order-sidebar">
+        <div class="order-card">
+          <h3 class="order-title">طلبك</h3>
+          <table class="order-table">
+            <thead>
+              <tr>
+                <th>المجموع</th>
+                <th>المنتج</th>
+              </tr>
+            </thead>
+            <tbody id="order-items"></tbody>
+          </table>
+
+          <div class="payment-box">
+            <p>بطاقة الائتمان أو الخصم</p>
+            <div class="payment-instruction">
+              ادفع باستخدام بطاقة الائتمان أو الخصم عبر المعهد العربي لعلوم
+              السلامة
+            </div>
+          </div>
+
+          <p class="terms-text">
+            سيتم استخدام بياناتك الشخصية لدعم تجربتك عبر هذا الموقع، ولإدارة
+            الوصول إلى حسابك، ولأغراض أخرى موضحة في
+            <a href="AgreementPrivacy.html">سياسة الخصوصية</a>.
+          </p>
+
+          <button class="pay-btn" id="pay-btn" type="button">
+            تأكيد وإتمام الطلب
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+        <script src="js/script.js"></script>
+    <script src="js/auth-toggle.js"></script>
+    <script src="js/checkout.js"></script>
+  </body>
+</html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <link rel="icon" href="assets/icons/logo.webp" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>الأحداث-المعهد العربي لعلوم السلامة</title>
+    <!--تعريف للخط-->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <style>
+    </style>
+    <div id="header-placeholder"></div>
+    <!--قسم صفحة العرض-->
+
+    <div class="hero-section-m">
+      <img src="assets/imge/0006.jpg" alt="hero-logo" loading="lazy" />
+      <div class="logo-text"><p>الأحداث</p></div>
+    </div>
+
+    <!-- شريط الأحداث المتحرك -->
+    <div class="latest-events-ticker">
+      <div class="ticker-label">آخر الأحداث</div>
+      <div class="ticker-container">
+        <div id="ticker-content" class="ticker-content"></div>
+      </div>
+    </div>
+
+    <!--قسم الكروت-->
+    <div class="title0">
+      <p>الأحداث</p>
+    </div>
+
+    <div id="events-grid" class="card-container1"></div>
+
+    <div class="load-more-btn-container">
+      <button id="load-more-events" class="btn1" style="display: none;">عرض المزيد</button>
+    </div>
+
+    <script src="js/events.js"></script>
+    <script>
+      const Egrid = document.getElementById("events-grid");
+      const loadMoreBtn = document.getElementById("load-more-events");
+      const LOCAL_EVENTS = typeof events !== "undefined" ? events : [];
+      let displayedEventsCount = 0;
+      const eventsPerPage = 8;
+      const PAGE_NAME = "event.html";
+
+      function renderNextEvents() {
+        const nextChunk = LOCAL_EVENTS.slice(displayedEventsCount, displayedEventsCount + eventsPerPage);
+        const html = nextChunk.map(item => `
+          <div class="card1">
+            <img src="${item.image}" alt="${item.title}" loading="lazy">
+            <div class="class-content1">
+              <h3>${item.title}</h3>
+              <a href="views.html?id=${item.title.trim().replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '')}&source=events" class="btn1">عرض التفاصيل</a>
+            </div>
+          </div>
+        `).join("");
+        Egrid.insertAdjacentHTML('beforeend', html);
+        displayedEventsCount += nextChunk.length;
+        if (loadMoreBtn) loadMoreBtn.style.display = (displayedEventsCount < LOCAL_EVENTS.length) ? "inline-block" : "none";
+      }
+
+      function initTicker() {
+        const tickerContent = document.getElementById("ticker-content");
+        if (!tickerContent || !LOCAL_EVENTS.length) return;
+
+        // أخذ أحدث 5 أحداث
+        const latest = LOCAL_EVENTS.slice(0, 5);
+        const tickerHTML = latest.map(item => `
+          <a href="views.html?id=${item.title.trim().replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '')}&source=events" class="ticker-event">
+            ${item.title}
+          </a>
+        `).join("");
+
+        // تكرار المحتوى لضمان حركة مستمرة وسلسة
+        tickerContent.innerHTML = tickerHTML + tickerHTML + tickerHTML;
+      }
+
+      function initEvents() {
+        if (!Egrid) return;
+        if (!LOCAL_EVENTS.length) {
+          Egrid.innerHTML = '<p style="text-align:center; padding:20px;">لا توجد أحداث متاحة حالياً.</p>';
+          return;
+        }
+
+        let countToRender = eventsPerPage;
+        if (document.referrer.includes('views.html')) {
+          const savedCount = sessionStorage.getItem(`count_${PAGE_NAME}`);
+          if (savedCount) countToRender = parseInt(savedCount);
+        }
+
+        displayedEventsCount = 0;
+        const initialBatch = LOCAL_EVENTS.slice(0, countToRender);
+        Egrid.innerHTML = initialBatch.map(item => `
+            <div class="card1">
+              <img src="${item.image}" alt="${item.title}" loading="lazy">
+              <div class="class-content1">
+                <h3>${item.title}</h3>
+                <a href="views.html?id=${item.title.trim().replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '')}&source=events" class="btn1">عرض التفاصيل</a>
+              </div>
+            </div>
+        `).join("");
+        displayedEventsCount = initialBatch.length;
+        if (loadMoreBtn) loadMoreBtn.style.display = (displayedEventsCount < LOCAL_EVENTS.length) ? "inline-block" : "none";
+
+        // استرجاع مكان النزول
+        if (document.referrer.includes('views.html')) {
+          const savedPos = sessionStorage.getItem(`scroll_${PAGE_NAME}`);
+          if (savedPos) setTimeout(() => window.scrollTo({ top: parseInt(savedPos), behavior: 'instant' }), 250);
+        }
+      }
+
+      initTicker();
+      loadMoreBtn?.addEventListener("click", renderNextEvents);
+      document.addEventListener("DOMContentLoaded", initEvents);
+    </script>
+
+    <!--قسم سياسة الخصوصية-->
+
+    <!-- القسم الاخير-->
+
+    <div id="footer-placeholder"></div>
+        <script src="js/script.js"defer></script>
+    <script src="js/auth-toggle.js"defer></script>
+  </body>
+</html>

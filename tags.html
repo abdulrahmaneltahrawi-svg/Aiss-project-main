@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <link rel="icon" href="assets/icons/logo.webp" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>الوسوم - المعهد العربي لعلوم السلامة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+
+    <div class="hero-section-m">
+      <img src="assets/imge/0006.jpg" alt="tags-pic" loading="lazy" />
+      <div class="logo-text"><p id="tag-title-header">الوسوم</p></div>
+    </div>
+
+    <div class="title0">
+      <p>تصفح حسب الوسم: <span id="tag-name-display" style="color: #e4293a;">...</span></p>
+    </div>
+
+    <div id="tags-grid" class="card-container1" style="min-height: 400px;">
+        <p style="text-align: center; width: 100%; padding: 50px;">جاري تحميل المقالات...</p>
+    </div>
+
+    <div class="load-more-btn-container" id="load-more-container" style="display: none;">
+      <button id="load-more-btn" class="btn1">عرض المزيد</button>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/script.js"></script>
+    <script>
+      const grid = document.getElementById("tags-grid");
+      const params = new URLSearchParams(window.location.search);
+      const activeTagId = params.get("tagId");
+      const activeTagName = params.get("tagName");
+      const activeTagSlug = params.get("tagSlug");
+
+      let allArticles = [];
+      let displayedCount = 0;
+      const perPage = 8;
+
+      document.getElementById("tag-name-display").textContent = activeTagName || "وسم";
+      if(activeTagName) document.title = `مقالات # ${activeTagName} - المعهد العربي لعلوم السلامة`;
+
+      function renderCard(item) {
+        const slug = (item.title || "").trim().replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        const link = `views.html?id=${item.id}-${slug}&source=db`;
+        // توحيد جلب الصورة سواء كانت cover_image أو image أو img
+        const image = item.cover_image || item.inner_image || item.image || item.img || 'assets/magazine/placeholder.webp';
+
+        return `
+          <div class="card1">
+            <a href="${link}">
+              <img src="${image}" alt="${item.title}" width="350" height="200" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='assets/magazine/placeholder.webp';">
+            </a>
+            <div class="class-content1">
+              <h3>${item.title}</h3>
+              <a href="${link}" class="btn1">عرض المدونة</a>
+              <a href="edit_article.html?id=${item.id}" class="btn1 admin-only" style="background:#235287; color:white; display:none; margin-top:5px;">تعديل</a>
+            </div>
+          </div>
+        `;
+      }
+
+      function showNextBatch() {
+        const next = allArticles.slice(displayedCount, displayedCount + perPage);
+        if (next.length > 0) {
+            const html = next.map(item => renderCard(item)).join("");
+            if (displayedCount === 0) grid.innerHTML = html;
+            else grid.insertAdjacentHTML('beforeend', html);
+            
+            displayedCount += next.length;
+            checkAuthStatus(); // تحديث أزرار الإدارة
+        }
+        
+        document.getElementById("load-more-container").style.display = 
+            displayedCount < allArticles.length ? "flex" : "none";
+      }
+
+      async function fetchTagArticles() {
+        if (!activeTagId && !activeTagName) {
+            grid.innerHTML = '<p style="text-align:center; width:100%;">لم يتم تحديد وسم.</p>';
+            return;
+        }
+
+        try {
+          // PHP الحالي لا يدعم tag_id ويبحث فقط في t.slug باستخدام البارامتر "tag"
+          const tagValue = activeTagSlug || activeTagName;
+          const url = `api/get_articles_by_tag.php?tag=${encodeURIComponent(tagValue)}`;
+
+          const res = await fetch(url);
+          const data = await res.json();
+          
+          // استخراج المصفوفة بمرونة أكبر (سواء كانت مصفوفة مباشرة أو داخل كائن)
+          let articles = [];
+          if (Array.isArray(data)) {
+            articles = data;
+          } else if (data && typeof data === 'object') {
+            articles = data.articles || data.data || [];
+          }
+          
+          // عرض المقالات إذا وجدت المصفوفة بها عناصر، بغض النظر عن وجود حقل success
+          if (articles.length > 0) {
+            allArticles = articles;
+            grid.innerHTML = "";
+            showNextBatch();
+          } else {
+            grid.innerHTML = '<p style="text-align:center; width:100%; padding:50px;">لا توجد مقالات مرتبطة بهذا الوسم حالياً.</p>';
+          }
+        } catch (err) {
+          console.error("Error:", err);
+          grid.innerHTML = '<p style="text-align:center; width:100%;">حدث خطأ أثناء جلب البيانات.</p>';
+        }
+      }
+
+      document.getElementById("load-more-btn").addEventListener("click", showNextBatch);
+      document.addEventListener("DOMContentLoaded", fetchTagArticles);
+    </script>
+    <script src="js/auth-toggle.js"></script>
+  </body>
+</html>

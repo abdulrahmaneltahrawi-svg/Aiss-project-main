@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="assets/icons/logo.webp" />
+    <title>تعديل مقال - المعهد العربي لعلوم السلامة</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js"></script>
+    <style>
+      .editor-wrapper {
+        max-width: 1200px;
+        margin: 140px auto 40px;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 30px;
+      }
+      .db-sidebar {
+        background: #fff;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        height: fit-content;
+      }
+      .db-sidebar ul {
+        list-style: none;
+        padding: 0;
+      }
+      .db-sidebar li {
+        margin-bottom: 10px;
+      }
+      .db-sidebar a {
+        display: block;
+        padding: 12px 15px;
+        border-radius: 10px;
+        color: #444;
+        font-weight: bold;
+        transition: 0.3s;
+      }
+      .db-sidebar a:hover,
+      .db-sidebar a.active {
+        background: #f0f4f8;
+        color: #e4293a;
+      }
+      .form-box {
+        background: #fff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #235287;
+      }
+      .form-group input[type="text"],
+      .form-group input[type="file"],
+      .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-family: inherit;
+        margin-bottom: 10px;
+      }
+      .save-btn {
+        background: #235287;
+        color: #fff;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s;
+      }
+      .save-btn:hover {
+        background: #1a3c63;
+      }
+      @media (max-width: 768px) {
+        .editor-wrapper {
+          grid-template-columns: 1fr;
+          margin-top: 100px;
+        }
+        .db-sidebar {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+
+    <div class="editor-wrapper">
+      <aside class="db-sidebar">
+        <h3 style="color: #235287; margin-bottom: 20px">التحكم</h3>
+        <ul>
+          <li><a href="dashboard.html">لوحة التحكم</a></li>
+          <li><a href="blogs.html">الرجوع للمدونات</a></li>
+        </ul>
+      </aside>
+      <main class="form-box">
+        <h2 style="color: #235287; margin-bottom: 25px">تعديل المقال الحالي</h2>
+
+        <div class="form-group">
+          <label>نوع المقال:</label>
+          <select id="type">
+            <option value="0">محتويات علمية</option>
+            <option value="1">مقالات الخبراء</option>
+            <option value="2">مقالات المجلة</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>عنوان المقال:</label>
+          <input type="text" id="title" placeholder="عنوان المقال..." />
+          <label>الاسم اللطيف (Slug) بالإنجليزية:</label>
+          <input type="text" id="slug" placeholder="article-slug-example" />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px">
+          <div class="form-group">
+            <label>تحديث صورة الغلاف (اختياري):</label>
+            <input
+              type="file"
+              id="cover_image"
+              accept=".jpg,.jpeg,.png,.webp"
+            />
+          </div>
+          <div class="form-group">
+            <label>تحديث الصورة الداخلية (اختياري):</label>
+            <input
+              type="file"
+              id="inner_image"
+              accept=".jpg,.jpeg,.png,.webp"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>الوسوم (Tags):</label>
+          <input
+            type="text"
+            id="tag-input-field"
+            list="tags-hints"
+            placeholder="اكتب التاج واضغط Enter..."
+          />
+          <datalist id="tags-hints"></datalist>
+          <div
+            id="tags-list-container"
+            style="
+              display: flex;
+              flex-wrap: wrap;
+              gap: 8px;
+              margin-top: 10px;
+              margin-bottom: 20px;
+            "
+          ></div>
+          <input type="hidden" id="final-tags" name="tags" />
+        </div>
+
+        <div class="form-group">
+          <label>محتوى المقال:</label>
+          <textarea id="content"></textarea>
+        </div>
+        <button class="save-btn" onclick="updateArticle()">
+          حفظ التعديلات
+        </button>
+      </main>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/script.js"></script>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const articleId = params.get("id");
+
+      tinymce.init({
+        selector: "#content",
+        height: 400,
+        menubar: false,
+        plugins: "lists link code directionality image",
+        toolbar:
+          "undo redo | blocks | bold italic underline | forecolor | bullist numlist | image | alignright aligncenter alignleft | rtl ltr | code",
+        directionality: "rtl",
+        setup: function (editor) {
+          editor.on("init", function () {
+            if (articleId) loadArticleData();
+          });
+        },
+      });
+
+      // --- نظام إدارة التاجات ---
+      const tagsSet = new Set();
+      let allTagsMap = {};
+      const tagInput = document.getElementById("tag-input-field");
+      const tagsContainer = document.getElementById("tags-list-container");
+      const finalTagsInput = document.getElementById("final-tags");
+
+      async function fetchTagsSuggestions() {
+        try {
+          const response = await fetch("api/get_tags.php");
+          const data = await response.json();
+          if (data.success && Array.isArray(data.tags)) {
+            const datalist = document.getElementById("tags-hints");
+            datalist.innerHTML = data.tags
+              .map((tag) => `<option value="${tag.name}">`)
+              .join("");
+            data.tags.forEach((t) => (allTagsMap[t.name] = t.id));
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      function renderTags() {
+        tagsContainer.innerHTML = "";
+        tagsSet.forEach((tag) => {
+          const tagEl = document.createElement("span");
+          tagEl.className = "tag-bubble"; // يفضل استخدام class للتنسيق
+          tagEl.style =
+            "background: #235287; color: white; padding: 5px 12px; border-radius: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px;";
+          tagEl.textContent = tag;
+
+          const closeBtn = document.createElement("span");
+          closeBtn.style =
+            "cursor:pointer; font-weight:bold; font-size: 16px; line-height: 1;";
+          closeBtn.innerHTML = "&times;";
+          closeBtn.onclick = function () {
+            tagsSet.delete(tag);
+            renderTags();
+          };
+
+          tagEl.appendChild(closeBtn);
+          tagsContainer.appendChild(tagEl);
+        });
+
+        // التعديل هنا: التأكد من تحويل كل الأسماء الموجودة في الـ Set إلى ID من الخريطة
+        const tagIds = Array.from(tagsSet)
+          .map((name) => allTagsMap[name])
+          .filter((id) => id != null); // استبعاد أي شيء ليس له ID في قاعدة البيانات حالياً
+
+        finalTagsInput.value = JSON.stringify(tagIds);
+      }
+
+      tagInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const inputVal = tagInput.value.trim();
+          if (inputVal) {
+            const tags = inputVal
+              .split(",")
+              .map((t) => t.trim())
+              .filter((t) => t !== "");
+            tags.forEach((tag) => tagsSet.add(tag));
+            renderTags();
+            tagInput.value = "";
+          }
+        }
+      });
+
+      async function loadArticleData() {
+        try {
+          // 1. جلب اقتراحات الوسوم أولاً لضمان وجود خريطة الأسماء والمعرفات
+          await fetchTagsSuggestions();
+
+          // 2. جلب بيانات المقال الأساسية
+          const response = await fetch(
+            `api/get_article.php?id=${articleId.split("-")[0]}`,
+          );
+          const data = await response.json();
+
+          if (data.success) {
+            document.getElementById("title").value = data.article.title;
+            document.getElementById("slug").value = data.article.slug || "";
+            document.getElementById("type").value = data.article.type;
+            tinymce.get("content").setContent(data.article.content);
+
+            // 3. جلب الوسوم المرتبطة بالمقال وعرضها كفقاعات
+            const tagsRes = await fetch(
+              `api/get_article_tags.php?id=${articleId.split("-")[0]}`,
+            );
+            const tagsData = await tagsRes.json();
+
+            if (tagsData.success && Array.isArray(tagsData.tags)) {
+              tagsData.tags.forEach((tag) => {
+                const tagName = typeof tag === "object" ? tag.name : tag;
+                if (tagName) tagsSet.add(tagName);
+              });
+              renderTags();
+            }
+          } else {
+            alert("فشل في جلب بيانات المقال");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      function updateArticle() {
+        const formData = new FormData();
+
+        // معالجة الوسوم المتبقية في الحقل
+        const currentTagInput = tagInput.value.trim();
+        if (currentTagInput) {
+          currentTagInput.split(",").forEach((t) => {
+            if (t.trim()) tagsSet.add(t.trim());
+          });
+          renderTags();
+        }
+
+        formData.append("article_id", articleId);
+        formData.append("title", document.getElementById("title").value);
+        formData.append("slug", document.getElementById("slug").value);
+        formData.append("type", document.getElementById("type").value);
+        formData.append("tags", finalTagsInput.value);
+        formData.append("content", tinymce.get("content").getContent());
+
+        if (document.getElementById("cover_image").files[0])
+          formData.append(
+            "cover_image",
+            document.getElementById("cover_image").files[0],
+          );
+        if (document.getElementById("inner_image").files[0])
+          formData.append(
+            "inner_image",
+            document.getElementById("inner_image").files[0],
+          );
+
+        fetch("api/edit_article.php", { method: "POST", body: formData })
+          .then((res) => res.json())
+          .then((data) => {
+            alert(data.message);
+            if (data.success) window.location.href = "blogs.html";
+          })
+          .catch((err) => alert("خطأ في الاتصال بالسيرفر"));
+      }
+
+      window.addEventListener("load", () => {
+        fetch("api/check_user_auth.php")
+          .then((r) => r.json())
+          .then((data) => {
+            if (
+              !data.authenticated ||
+              (data.user.role != "admin" && data.user.can_add_article != 1)
+            )
+              window.location.href = "index.html";
+          });
+      });
+    </script>
+  </body>
+</html>

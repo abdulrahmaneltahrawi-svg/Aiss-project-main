@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="assets/icons/logo.webp">
+    <title>إضافة مقال - المعهد العربي لعلوم السلامة</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js"></script>
+    <style>
+        .editor-wrapper {
+            max-width: 1200px;
+            margin: 140px auto 40px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+        .db-sidebar {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+        .db-sidebar ul { list-style: none; padding: 0; }
+        .db-sidebar li { margin-bottom: 10px; }
+        .db-sidebar a { 
+            display: block; padding: 12px 15px; border-radius: 10px; 
+            color: #444; font-weight: bold; transition: 0.3s;
+        }
+        .db-sidebar a:hover, .db-sidebar a.active { background: #f0f4f8; color: #e4293a; }
+
+        .form-box { 
+            background: #fff; padding: 30px; border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #235287;}
+        .form-group input[type="text"], .form-group input[type="file"] {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;margin-bottom: 10px;
+        }
+        .save-btn {
+            background: #e4293a; color: #fff; border: none; padding: 12px 30px; border-radius: 8px;
+            font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s;
+        }
+        .save-btn:hover { background: #b71c1c; }
+
+        @media (max-width: 768px) {
+            .editor-wrapper { grid-template-columns: 1fr; margin-top: 100px; }
+            .db-sidebar { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="editor-wrapper">
+        <aside class="db-sidebar">
+            <h3 style="color: #235287; margin-bottom: 20px;">القائمة</h3>
+            <ul>
+                <li><a href="dashboard.html">الرجوع</a></li>
+                <li><a href="#" class="active">إضافة كتيب</a></li>
+            </ul>
+        </aside>
+        <main class="form-box">
+              
+            
+            <h2 style="color: #235287; margin-bottom: 25px;">إضافة كتيب جديد</h2>
+            <div class="form-group">
+                <label>عنوان الكتيب:</label>
+                <input type="text" id="title" placeholder="أدخل عنوان الكتيب هنا...">
+                <label>الكتيب باللغة الانجليزية:</label>
+                <input type="text" id="slug" placeholder="أدخل اسم الكتيب بالانجليزي...">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>صورة الكتيب:</label>
+                    <input type="file" id="cover_image" accept=".jpg,.jpeg,.png,.webp">
+                </div>
+                <div class="form-group">
+                    <label>ملف الكتيب:</label>
+                    <input type="file" id="file" accept=".pdf">
+                </div>
+            </div>
+            
+            <button class="save-btn" onclick="saveArticle()">حفظ ونشر الكتيب</button>
+        </main>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    <script src="js/script.js"></script>
+  <script>
+    function saveArticle() {
+      const title = document.getElementById("title").value.trim();
+      const slug = document.getElementById("slug").value.trim();
+      const coverImage = document.getElementById("cover_image").files[0];
+      const pdfFile = document.getElementById("file").files[0];
+
+      if (!title || !coverImage || !pdfFile) {
+        alert("يرجى ملء جميع الحقول واختيار الملفات المطلوبة");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("slug", slug);
+      formData.append("cover_image", coverImage);
+      formData.append("file", pdfFile);
+
+      fetch("api/add_booklet.php", {
+        method: "POST",
+        body: formData,
+        credentials: "same-origin"
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        if (data.success) {
+          window.location.href = "dashboard.html";
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("حصل خطأ في الاتصال بالخادم");
+      });
+    }
+
+    // التحقق من الصلاحيات عند تحميل الصفحة
+    window.addEventListener('load', () => {
+        fetch('api/check_user_auth.php', { cache: 'no-store' })
+        .then(r => r.json())
+        .then(data => {
+            if(!data.authenticated || !data.user || data.user.can_add_article != 1){
+                window.location.href = 'index.html';
+            } 
+        });
+    });
+  </script>
+    <script src="js/auth-toggle.js"></script>
+</body>
+</html>

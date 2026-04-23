@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/webp" href="assets/icons/logo.webp" />
+    <title>سلة المشتريات</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="header-placeholder"></div>
+
+    <main class="page-content">
+      <div id="cart-items" class="card-container1"></div>
+
+      <div class="cart-summary">
+        <h3 id="cart-total"></h3>
+        <a href="checkout.html" class="cart-checkout-btn">إتمام الطلب</a>
+      </div>
+
+      <div class="empty-cart-container" id="empty-cart">
+        <div class="empty-cart-content">
+          <div class="cart-icon-wrapper">
+            <img
+              src="assets/imge/empty.webp"
+              alt="سلة فارغة"
+              loading="lazy"
+            />
+          </div>
+
+          <h2 class="empty-cart-title">سلة مشترياتك فارغة حالياً.</h2>
+
+          <p class="empty-cart-text">
+            قبل متابعة عملية الدفع، يجب عليك إضافة بعض المنتجات إلى سلة التسوق
+            الخاصة بك.<br />
+            ستجد الكثير من المنتجات المثيرة للاهتمام على صفحة "المتجر" الخاصة
+            بنا.
+          </p>
+
+          <a href="store.html" class="return-shop-btn">العودة للمتجر</a>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      let cart = JSON.parse(localStorage.getItem("myCart")) || [];
+      const cartContainer = document.getElementById("cart-items");
+      const emptyCartEl = document.getElementById("empty-cart");
+      const totalEl = document.getElementById("cart-total");
+
+      function formatPrice(value) {
+        const n = Number(value);
+        if (Number.isFinite(n)) return `${n} د.ا`;
+        return value ? `${value} د.ا` : "";
+      }
+
+      function calcTotal(items) {
+        return items.reduce((sum, it) => sum + (Number(it.price) || 0), 0);
+      }
+
+      function removeFromCart(index) {
+        cart = cart.filter((_, i) => i !== index);
+        localStorage.setItem("myCart", JSON.stringify(cart));
+        renderCart();
+      }
+
+      function renderCart() {
+        if (!cartContainer || !emptyCartEl) return;
+
+        if (cart.length === 0) {
+          emptyCartEl.style.display = "flex";
+          cartContainer.style.display = "none";
+          cartContainer.innerHTML = "";
+          if (totalEl) totalEl.innerText = "";
+          const summary = document.querySelector(".cart-summary");
+          if (summary) summary.style.display = "none";
+          return;
+        }
+
+        emptyCartEl.style.display = "none";
+        cartContainer.style.display = "flex";
+        cartContainer.style.flexDirection = "column";
+        const summary = document.querySelector(".cart-summary");
+        if (summary) summary.style.display = "flex";
+
+        // عرض الكروت بترتيب عكسي (الأحدث في الأعلى)
+        cartContainer.innerHTML = [...cart]
+          .reverse()
+          .map(
+            (item, reversedIdx) => {
+              const originalIdx = cart.length - 1 - reversedIdx;
+              return `
+      <div class="cart-item">
+        <div class="cart-item__media">
+          <img src="${item.img}" alt="${item.title || "منتج"}">
+        </div>
+        <div class="cart-item__body">
+          <h3 class="cart-item__title">${item.title || ""}</h3>
+          <p class="cart-item__price">${formatPrice(item.price)}</p>
+        </div>
+        <div class="cart-item__actions">
+          <button class="cart-remove-btn" type="button" onclick="removeFromCart(${originalIdx})">حذف</button>
+        </div>
+      </div>
+    `;
+            }
+          )
+          .join("");
+
+        if (totalEl) totalEl.innerText = `الإجمالي: ${calcTotal(cart)} د.ا`;
+      }
+
+      renderCart();
+    </script>
+    <div id="footer-placeholder"></div>
+
+        <script src="js/script.js" defer></script>
+    <script src="js/auth-toggle.js" defer></script>
+  </body>
+</html>
