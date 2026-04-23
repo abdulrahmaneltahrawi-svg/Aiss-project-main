@@ -1,46 +1,4 @@
-// ===== وظيفة جلب وعرض المدونات من قاعدة البيانات =====
-async function get_articles() {
-  const grid = document.getElementById("blogs-grid");
-  if (!grid || window.location.pathname.includes("blogs.html")) return;
 
-  try {
-    const response = await fetch("api/get_articles.php");
-    const data = await response.json();
-
-    if (data.success && data.articles && data.articles.length > 0) {
-      grid.innerHTML = data.articles
-        .slice(0, 8)
-        .map((item) => {
-          const slug = (item.title || "")
-            .trim()
-            .replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, "-")
-            .replace(/^-+|-+$/g, "");
-          const link = `views.html?id=${item.id}-${slug}`;
-          const image = item.cover_image || "assets/magazine/IMG_1325.webp";
-
-          return `
-          <div class="card1" id="blog-card-${item.id}">
-              <a href="${link}">
-                <img src="${image}" alt="${item.title || "صورة المدونة"}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='assets/magazine/IMG_1325.webp';">
-              </a>
-              <div class="class-content1">
-                <h3>${item.title}</h3>
-                <a href="${link}" class="btn1">عرض المدونة</a>
-                <div class="admin-only" style="display: none; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 5px; width: 100%;">
-                    <a href="edit_article.html?id=${item.id}" class="btn1" style="background:#235287; color:white; margin-right:70px; text-align:center; padding: 8px 5px; font-size: 12px;">تعديل</a>
-                    <button onclick="deleteArticle(${item.id})" class="btn1" style="background:#e4293a; color:white; border:1px solid black; cursor:pointer; margin:0; padding: 8px 5px; font-size: 12px;">حذف</button>
-                </div>
-              </div>
-          </div>`;
-        })
-        .join("");
-      // تحديث ظهور أزرار الإدارة بعد التحميل
-      checkAuthStatus();
-    }
-  } catch (error) {
-    console.error("خطأ في جلب المدونات من قاعدة البيانات:", error);
-  }
-}
 
 // ===== دوال الحذف العامة =====
 async function deleteArticle(id) {

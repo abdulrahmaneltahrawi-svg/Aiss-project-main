@@ -124,7 +124,7 @@ function renderBlogCard(item, index) {
               ${item.source === 'db' ? `
                 <div class="admin-only" style="display: none; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 8px; width: 100%;">
                   <a href="edit_article.html?id=${item.id}" class="btn1 admin-btn" style="background:#235287; color:white; padding: 8px 5px; font-size: 12px; margin:0; text-align:center;">تعديل</a>
-                  <button onclick="deleteArticle(${item.id})" class="btn1 admin-btn" style="background:#e4293a; border:1px solid black; color:white; cursor:pointer; padding: 8px 10px; font-size: 12px; margin:0;">حذف</button>
+                  <button onclick="deleteArticle(${item.id})" class="btn1 admin-btn" style="background:#e4293a; border:1px solid black; color:white; cursor:pointer; padding: 8px 10px; font-size: 12px; margin:0;">الحذف</button>
                 </div>
               ` : ''}
           </div>

@@ -92,12 +92,12 @@
               <div class="card1" id="magazine-card-${id}">
                   <a href="${href}">
                       <img src="${imagePath}" alt="${item.title || "صورة المجلة"}"
-                           style="width: 100%; height: 250px; object-fit: cover;"
+                           style="width: 100%; height: 270px; object-fit: cover;"
                            loading="lazy" onerror="this.onerror=null; this.src='assets/magazine/placeholder.webp';">
                   </a>
 
                   <div class="class-content1" style="padding: 15px 10px;">
-                      <h3 style="font-size: 1.1rem; margin-bottom: 10px; min-height: 2.4em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                      <h3 style="font-size: 1.1rem;   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                           ${item.title}
                       </h3>
 
@@ -111,8 +111,8 @@
                           </a>
                           <button onclick="deleteMagazine(${id})"
                              class="btn1"
-                             style="background:#e4293a; color:white; border:1px solid black; cursor:pointer; margin:0; padding: 10px 10px; font-size: 12px;">
-                             حذف
+                             style="background:#e4293a; color:white;  margin:0; text-align:center; padding: 6px 5px; font-size: 12px;">
+                             الحذف
                           </button>
                       </div>
                   </div>
