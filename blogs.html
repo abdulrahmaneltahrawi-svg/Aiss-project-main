@@ -209,6 +209,41 @@ fetch(fetchUrl)
   })
   .catch(err => { console.error("Fetch Error:", err); applyFilter(); });
 
+async function deleteArticle(id) {
+    if (!confirm("هل أنت متأكد من حذف هذا المقال نهائياً؟")) return;
+
+    try {
+        const formData = new FormData();
+        // التعديل هنا: نستخدم article_id ليتوافق مع ملف PHP الجديد
+        formData.append("article_id", id); 
+
+        const response = await fetch("api/delete_article.php", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert("تم حذف المقال بنجاح");
+            
+            // تحديث القائمة المحلية وحذف الكرت من الشاشة
+            allBlogs = allBlogs.filter(blog => blog.id != id);
+            
+            // إعادة تشغيل الفلتر لتحديث الشبكة فوراً
+            if (typeof applyFilter === 'function') {
+                applyFilter();
+            }
+        } else {
+            // سيعرض لك الرسالة القادمة من السيرفر (مثل Unauthorized أو Invalid article id)
+            alert("فشل الحذف: " + (data.message || "خطأ غير معروف"));
+        }
+    } catch (error) {
+        console.error("Error deleting article:", error);
+        alert("حدث خطأ في الاتصال بالسيرفر");
+    }
+}
+
 
     </script>
     <!-- القسم الاخير-->

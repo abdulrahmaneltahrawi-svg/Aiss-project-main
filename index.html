@@ -113,28 +113,19 @@ function createCardHTML(item, btnText = "عرض المجلة", index = 0) {
             </a>
             
             <div class="class-content1" style="padding: 15px 10px;">
-                <h3 style="font-size: 1.1rem; margin-bottom: 10px; min-height: 2.4em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                <h3 style="font-size: 1.1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                     ${item.title}
                 </h3>
                 
                 <a href="${href}" class="btn1" style="display: block; margin-bottom: 5px; text-align: center;">${btnText}</a>
                 
-                <div class="admin-only" style="display: none; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px;">
-                    <a href="edit_magazine.html?id=${id}" 
-                       class="btn1" 
-                       style="background:#235287; color:white; margin:0; text-align:center; padding: 8px 5px; font-size: 12px;">
-                       تعديل
-                    </a>
-                    <button onclick="deleteMagazine(${id})" 
-                       class="btn1" 
-                       style="background:#e4293a; color:white; margin:0; text-align:center; padding: 8px 5px; font-size: 12px;">
-                       الحذف
-                    </button>
-                </div>
+
             </div>
         </div>
     `;
 }
+
+
 
 // 2. دالة جلب المجلات
 async function loadHomeMagazines() {
@@ -201,10 +192,7 @@ async function get_articles() {
               <div class="class-content1">
                 <h3>${item.title}</h3>
                 <a href="${link}" class="btn1">عرض المدونة</a>
-                <div class="admin-only" style="display: none; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 5px; width: 100%;">
-                    <a href="edit_article.html?id=${item.id}" class="btn1" style="background:#235287; color:white; margin-right:70px; text-align:center; padding: 8px 5px; font-size: 12px;">تعديل</a>
-                    <button onclick="deleteArticle(${item.id})" class="btn1" style="background:#e4293a; color:white; margin:0; text-align:center; padding: 8px 5px; font-size: 12px;">الحذف</button>
-                </div>
+                
               </div>
           </div>`;
         })

@@ -170,7 +170,36 @@ document.getElementById('magazines-sort').addEventListener('change', function() 
 // استدعاء الدالة عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', get_magazines);
 
+async function deleteMagazine(id) {
+    if (!confirm("هل أنت متأكد من حذف هذه المجلة؟")) return;
 
+    try {
+        // إنشاء FormData لإرسال البيانات كـ POST كما يتطلب ملف الـ PHP
+        const formData = new FormData();
+        formData.append("magazine_id", id); // أرسلناها باسم magazine_id وليس id
+
+        const response = await fetch("api/delete_magazine.php", {
+            method: "POST", // غيرنا الطريقة إلى POST
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert("تم الحذف بنجاح");
+            
+            // تحديث المصفوفة وحذف الكرت من الصفحة
+            allMagazines = allMagazines.filter(m => m.id != id);
+            renderMagazines(allMagazines);
+        } else {
+            // إذا ظهرت رسالة Unauthorized تأكد أنك مسجل دخول
+            alert("فشل الحذف: " + data.message);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("حدث خطأ في الاتصال بالسيرفر");
+    }
+}
 
 
 
