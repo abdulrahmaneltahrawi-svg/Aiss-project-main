@@ -1,118 +1,127 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/webp" href="assets/icons/logo.webp" />
+    <title>المجلة-المعهد العربي لعلوم السلامة</title>
+    <link rel="stylesheet" href="style.css" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/webp" href="assets/icons/logo.webp" />
-  <title>المجلة-المعهد العربي لعلوم السلامة</title>
-  <link rel="stylesheet" href="style.css" />
+    <!-- تسريع الاتصال بسيرفر الملفات الخارجية -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 
-  <!-- تسريع الاتصال بسيرفر الملفات الخارجية -->
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <!--تعريف للخط-->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-  <!--تعريف للخط-->
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
-    rel="stylesheet" />
-</head>
+  <body>
+    <div id="header-placeholder"></div>
 
-<body>
+    <!--قسم صفحة العرض-->
 
-  <div id="header-placeholder"></div>
-
-  <!--قسم صفحة العرض-->
-
-  <div class="hero-section-m">
-    <img src="assets/imge/0004.jpg" alt="magazine-pic" loading="lazy" />
-    <div class="logo-text">
-      <p>المجلات</p>
+    <div class="hero-section-m">
+      <img src="assets/imge/0004.jpg" alt="magazine-pic" loading="lazy" />
+      <div class="logo-text">
+        <p>المجلات</p>
+      </div>
     </div>
-  </div>
 
-  <!--قسم المجلات-->
+    <!--قسم المجلات-->
 
-  <div class="title0">
-    <p><span class="title0-color">اخر</span> مجلة السلامة العربية</p>
-  </div>
+    <div class="title0">
+      <p><span class="title0-color">اخر</span> مجلة السلامة العربية</p>
+    </div>
 
-  <div class="lastV">
-    <a
-      href="flipbook.html?title=مجلة السلامة العربية - العدد 62&src=https://cdn.jsdelivr.net/gh/abdulrahmaneltahrawi-svg/aiss-storage@main/pdfs/Issue-62-Interactive-Pages.pdf&back=magazine.html">
-      <img src="assets/imge/cover.jpg" alt="latest-magazine-cover" fetchpriority="high" decoding="sync" />
-    </a>
-  </div>
+    <div class="lastV">
+      <a
+        href="flipbook.html?title=مجلة السلامة العربية - العدد 62&src=https://cdn.jsdelivr.net/gh/abdulrahmaneltahrawi-svg/aiss-storage@main/pdfs/Issue-62-Interactive-Pages.pdf&back=magazine.html"
+      >
+        <img
+          src="assets/imge/cover.jpg"
+          alt="latest-magazine-cover"
+          fetchpriority="high"
+          decoding="sync"
+        />
+      </a>
+    </div>
 
-  <!--قسم الكروت-->
-  <div class="title0">
-    <p> <span class="title0-color">اصدارات</span> مجلات السلامة العربية </p>
-  </div>
+    <!--قسم الكروت-->
+    <div class="title0">
+      <p><span class="title0-color">اصدارات</span> مجلات السلامة العربية</p>
+    </div>
 
-  <div class="magazines-filter">
-    <label for="magazines-sort">ترتيب المجلات:</label>
-    <select id="magazines-sort">
-      <option value="newest" selected>من الأحدث للأقدم</option>
-      <option value="oldest">من الأقدم للأحدث</option>
-    </select>
-  </div>
+    <div class="magazines-filter">
+      <label for="magazines-sort">ترتيب المجلات:</label>
+      <select id="magazines-sort">
+        <option value="newest" selected>من الأحدث للأقدم</option>
+        <option value="oldest">من الأقدم للأحدث</option>
+      </select>
+    </div>
 
-  <div id="magazines-grid" class="card-container1">
-  </div>
-  <div class="load-more-btn-container">
-    <button id="load-more-magazines" class="btn1" style="display: none;">عرض المزيد</button>
-  </div>
+    <div id="magazines-grid" class="card-container1"></div>
+    <div class="load-more-btn-container">
+      <button id="load-more-magazines" class="btn1" style="display: none">
+        عرض المزيد
+      </button>
+    </div>
 
+    <!-- القسم الاخير-->
 
-  <!-- القسم الاخير-->
+    <div id="footer-placeholder"></div>
 
-  <div id="footer-placeholder"></div>
+    <script>
+      function createCardHTML(item, btnText = "عرض المجلة", index = 0) {
+          // 1. تجهيز المعرفات والروابط
+          const id = item.id || 0;
+          const slug = (item.slug || (item.title || "").trim().replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, ''));
+          const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
-  <script>
-function createCardHTML(item, btnText = "عرض المجلة", index = 0) {
-    // 1. تجهيز المعرفات والروابط
-    const id = item.id || 0;
-    const slug = (item.slug || (item.title || "").trim().replace(/[^\u0600-\u06FFa-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, ''));
-    const currentPage = window.location.pathname.split("/").pop() || "index.html";
-    
-    // 2. تحديد الرابط (من قاعدة البيانات أو رابط خارجي)
-    let href = `flipbook.html?id=${id}-${slug}&back=${currentPage}`;
-    if (!id || id === 0) {
-        href = `flipbook.html?title=${encodeURIComponent(item.title)}&src=${encodeURIComponent(item.link)}&back=${currentPage}`;
-    }
+          // 2. تحديد الرابط (من قاعدة البيانات أو رابط خارجي)
+          let href = `flipbook.html?id=${id}-${slug}&back=${currentPage}`;
+          if (!id || id === 0) {
+              href = `flipbook.html?title=${encodeURIComponent(item.title)}&src=${encodeURIComponent(item.link)}&back=${currentPage}`;
+          }
 
-    // 3. تجهيز الصورة
-    const imagePath = item.img || item.cover_image || "assets/magazine/placeholder.webp";
+          // 3. تجهيز الصورة
+          const imagePath = item.img || item.cover_image || "assets/magazine/placeholder.webp";
 
-    return `
-        <div class="card1" id="magazine-card-${id}">
-            <a href="${href}">
-                <img src="${imagePath}" alt="${item.title || "صورة المجلة"}" 
-                     style="width: 100%; height: 250px; object-fit: cover;" 
-                     loading="lazy" onerror="this.onerror=null; this.src='assets/magazine/placeholder.webp';">
-            </a>
-            
-            <div class="class-content1" style="padding: 15px 10px;">
-                <h3 style="font-size: 1.1rem; margin-bottom: 10px; min-height: 2.4em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                    ${item.title}
-                </h3>
-                
-                <a href="${href}" class="btn1" style="display: block; margin-bottom: 5px; text-align: center;">${btnText}</a>
-                
-                <div class="admin-only" style="display: none; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px;">
-                    <a href="edit_magazine.html?id=${id}" 
-                       class="btn1" 
-                       style="background:#235287; color:white; margin:0; text-align:center; padding: 6px 5px; font-size: 12px;">
-                       تعديل
-                    </a>
-                    <button onclick="deleteMagazine(${id})" 
-                       class="btn1" 
-                       style="background:#e4293a; color:white; border:1px solid black; cursor:pointer; margin:0; padding: 10px 10px; font-size: 12px;">
-                       حذف
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-}
+          return `
+              <div class="card1" id="magazine-card-${id}">
+                  <a href="${href}">
+                      <img src="${imagePath}" alt="${item.title || "صورة المجلة"}"
+                           style="width: 100%; height: 250px; object-fit: cover;"
+                           loading="lazy" onerror="this.onerror=null; this.src='assets/magazine/placeholder.webp';">
+                  </a>
+
+                  <div class="class-content1" style="padding: 15px 10px;">
+                      <h3 style="font-size: 1.1rem; margin-bottom: 10px; min-height: 2.4em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                          ${item.title}
+                      </h3>
+
+                      <a href="${href}" class="btn1" style="display: block; margin-bottom: 5px; text-align: center;">${btnText}</a>
+
+                      <div class="admin-only" style="display: none; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px;">
+                          <a href="edit_magazine.html?id=${id}"
+                             class="btn1"
+                             style="background:#235287; color:white; margin:0; text-align:center; padding: 6px 5px; font-size: 12px;">
+                             تعديل
+                          </a>
+                          <button onclick="deleteMagazine(${id})"
+                             class="btn1"
+                             style="background:#e4293a; color:white; border:1px solid black; cursor:pointer; margin:0; padding: 10px 10px; font-size: 12px;">
+                             حذف
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          `;
+      }
+// متغير عالمي لتخزين المجلات بعد جلبها
+let allMagazines = [];
+
 async function get_magazines() {
     const grid = document.getElementById("magazines-grid");
     if (!grid) return;
@@ -122,33 +131,56 @@ async function get_magazines() {
         const data = await response.json();
 
         if (data.success && data.magazines) {
-            grid.innerHTML = data.magazines.map((m, idx) => {
-                // تحويل بيانات قاعدة البيانات لتناسب الدالة
-                const formatted = {
-                    id: m.id,
-                    title: m.title, 
-                    img: m.cover_image,
-                    link: m.file_path,
-                    date: m.title, // نضع عنوان الإصدار في مكان التاريخ
-                    slug: m.slug
-                };
-                return createCardHTML(formatted, "عرض المجلة", idx);
-            }).join("");
+            // حفظ البيانات في المتغير العالمي
+            allMagazines = data.magazines;
             
-            // تحديث أزرار الإدارة
-            if (typeof checkAuthStatus === 'function') checkAuthStatus();
+            // تنفيذ الترتيب الافتراضي (الأحدث أولاً)
+            renderMagazines(allMagazines);
         }
     } catch (error) {
         console.error("Error fetching magazines:", error);
     }
 }
 
-  </script>
-  
+// دالة مخصصة لرسم الكروت في الصفحة
+function renderMagazines(magazinesList) {
+    const grid = document.getElementById("magazines-grid");
+    grid.innerHTML = magazinesList.map((m, idx) => {
+        const formatted = {
+            id: m.id,
+            title: m.title, 
+            img: m.cover_image,
+            link: m.file_path,
+            slug: m.slug
+        };
+        return createCardHTML(formatted, "عرض المجلة", idx);
+    }).join("");
 
-  <script src="js/script.js" defer></script>
-  <script src="js/auth-toggle.js" defer></script>
-</body>
+    // تحديث أزرار الإدارة بعد الرسم
+    if (typeof checkAuthStatus === 'function') checkAuthStatus();
+}
 
+// ربط عنصر الاختيار (Select) بحدث التغيير
+document.getElementById('magazines-sort').addEventListener('change', function() {
+    const sortValue = this.value;
+    let sortedList = [...allMagazines]; // أخذ نسخة من المصفوفة
 
+    if (sortValue === 'newest') {
+        // ترتيب تنازلي (ID الأكبر أولاً)
+        sortedList.sort((a, b) => b.id - a.id);
+    } else {
+        // ترتيب تصاعدي (ID الأصغر أولاً)
+        sortedList.sort((a, b) => a.id - b.id);
+    }
+
+    renderMagazines(sortedList);
+});
+
+// استدعاء الدالة عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', get_magazines);
+    </script>
+
+    <script src="js/script.js" defer></script>
+    <script src="js/auth-toggle.js" defer></script>
+  </body>
 </html>
